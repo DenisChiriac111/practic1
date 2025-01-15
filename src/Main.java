@@ -10,7 +10,7 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public enum House {
-    Stark, Lannister, Targaryen, Baratheon, Greyjoy, Martell, Tyrell, TreeMap
+    Stark, Lannister, Targaryen, Baratheon, Greyjoy, Martell, Tyrell, TreeMap;
 
     public class Event {
     private int id;
@@ -63,7 +63,20 @@ public enum House {
 
 
 public class Main {
-
+    public List<Event> readEvents(String filePath) throws IOException {
+        return Files.lines(Paths.get(filePath))
+                .map(line -> {
+                    String[] parts = line.split("#");
+                    Event event = new Event();
+                    event.setId(Integer.parseInt(parts[0]));
+                    event.setMitgliedsname(parts[1]);
+                    event.setHaus(House.valueOf(parts[2]));
+                    event.setEreignis(parts[3]);
+                    event.setDatum(LocalDate.parse(parts[4]));
+                    return event;
+                })
+                .collect(Collectors.toList());
+}
 
     public static void displayMembersByInitial(List<Event> events, char initial) {
         events.stream()
@@ -92,7 +105,7 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) {
+    public void main(String[] args) {
         try {
             List<Event> events = readEvents("evenimente.json");
             Scanner scanner = new Scanner(System.in);
@@ -109,4 +122,5 @@ public class Main {
             e.printStackTrace();
         }
     }
+}
 }
