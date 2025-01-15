@@ -73,7 +73,18 @@ public class Main {
                 .forEach(System.out::println);
     }
 
-        public static void main(String[] args) {
+    public static void displayStarkEventsSorted(List<Event> events) {
+        events.stream()
+                .filter(event -> event.getHaus() == House.Stark)
+                .sorted(Comparator.comparing(Event::getDatum))
+                .forEach(event -> System.out.println(event.getDatum() + ": " + event.getMitgliedsname() + " - " + event.getEreignis()));
+    }
+
+
+
+    }
+
+    public static void main(String[] args) {
         try {
             List<Event> events = readEvents("evenimente.json");
             Scanner scanner = new Scanner(System.in);
@@ -82,7 +93,12 @@ public class Main {
             char initial = scanner.next().charAt(0);
             displayMembersByInitial(events, initial);
 
+            System.out.println("\nEvents of House Stark sorted by date:");
+            displayStarkEventsSorted(events);
 
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
