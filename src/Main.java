@@ -1,5 +1,3 @@
-
-
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,8 +10,9 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public enum House {
-    Stark, Lannister, Targaryen, Baratheon, Greyjoy, Martell, Tyrell
-public class Event {
+    Stark, Lannister, Targaryen, Baratheon, Greyjoy, Martell, Tyrell, TreeMap
+
+    public class Event {
     private int id;
     private String mitgliedsname;
     private House haus;
@@ -65,6 +64,7 @@ public class Event {
 
 public class Main {
 
+
     public static void displayMembersByInitial(List<Event> events, char initial) {
         events.stream()
                 .map(Event::getMitgliedsname)
@@ -80,8 +80,16 @@ public class Main {
                 .forEach(event -> System.out.println(event.getDatum() + ": " + event.getMitgliedsname() + " - " + event.getEreignis()));
     }
 
+    public static void saveEventCounts(List<Event> events, String filePath) throws IOException {
+        Map<House, Long> eventCounts = events.stream()
+                .collect(Collectors.groupingBy(Event::getHaus, TreeMap::new, Collectors.counting()));
 
-
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePath))) {
+            for (Map.Entry<House, Long> entry : eventCounts.entrySet()) {
+                writer.write(entry.getKey() + "#" + entry.getValue());
+                writer.newLine();
+            }
+        }
     }
 
     public static void main(String[] args) {
@@ -96,7 +104,7 @@ public class Main {
             System.out.println("\nEvents of House Stark sorted by date:");
             displayStarkEventsSorted(events);
 
-
+            saveEventCounts(events, "ergebnis.txt");
         } catch (Exception e) {
             e.printStackTrace();
         }
